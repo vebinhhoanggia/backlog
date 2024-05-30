@@ -964,8 +964,6 @@ public class BacklogExcel implements GenSchedule {
 
 		fillTotalPic(sheet, allWrDatas);
 
-		evaluate(workbook, sheet);
-
 	}
 
 	private void fillTotalPic(final Sheet sheet, final List<PjjyujiDetail> allWrDatas) {
@@ -991,14 +989,6 @@ public class BacklogExcel implements GenSchedule {
 				break;
 			}
 		}
-	}
-
-	private void evaluate(final Workbook workbook, final Sheet sheet) {
-		// Cập nhật lại công thức
-		updatedTotalActualHoursFormula(sheet);
-
-		// Chạy lại toàn bộ công thức
-		evaluateAllFormula(workbook);
 	}
 
 	private String extracProcessOfWrCd(final String input) {
@@ -1051,6 +1041,7 @@ public class BacklogExcel implements GenSchedule {
 				continue;
 			}
 			genScheduleInfoForSheet(workbook, sheet, backlogPg, backlogSpec, backlogBug, pds);
+
 		}
 	}
 
@@ -1069,11 +1060,6 @@ public class BacklogExcel implements GenSchedule {
 
 		fillDataForSheet(workbook, sheet, datas, pds);
 
-		// Cập nhật lại công thức
-		updatedTotalActualHoursFormula(sheet);
-
-		// Chạy lại toàn bộ công thức
-		evaluateAllFormula(workbook);
 	}
 
 	private Pair<YearMonth, YearMonth> getRangeTarget(final List<PjjyujiDetail> pds) {
@@ -1098,7 +1084,6 @@ public class BacklogExcel implements GenSchedule {
 			}
 			standardizedRangeInput(sheet, ymS, ymE);
 		}
-		evaluateAllFormula(workbook);
 	}
 
 	/**
@@ -1113,9 +1098,6 @@ public class BacklogExcel implements GenSchedule {
 		createRangeWorkingReportDetail(pds, workbook);
 
 		fillBacklogDetailInfo(workbook, bds, pds);
-
-		// Chạy lại toàn bộ công thức
-		evaluateAllFormula(workbook);
 	}
 
 	private Path getLastSchedule(final Path projectSchPath) throws IOException {
@@ -1188,6 +1170,9 @@ public class BacklogExcel implements GenSchedule {
 
 			fillScheduleInfo(pds, bds, workbook);
 
+			// evaluate All Formula
+			evaluateFormula(workbook);
+
 			// new file schedule
 			final var targetFile = createNewFileSchedule(projectCd, projectSchPath, pds);
 
@@ -1198,6 +1183,21 @@ public class BacklogExcel implements GenSchedule {
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void evaluateFormula(final Workbook workbook) {
+		final var sheetIterator = workbook.sheetIterator();
+		while (sheetIterator.hasNext()) {
+			final var sheet = sheetIterator.next();
+			// Kiểm tra là sheet điền schedule
+			if (!ScheduleHelper.isScheduleSheet(sheet)) {
+				continue;
+			}
+			// Cập nhật lại công thức
+			updatedTotalActualHoursFormula(sheet);
+		}
+		// Chạy lại toàn bộ công thức
+		evaluateAllFormula(workbook);
 	}
 
 	private File createNewFileSchedule(final String projecCd, final Path projectSchPath,
@@ -1243,7 +1243,6 @@ public class BacklogExcel implements GenSchedule {
 	private String saveToNewFileSchedule(final Workbook workbook, final File targetFile) throws IOException {
 
 		try (var fileOut = new FileOutputStream(targetFile, false);) {
-
 			workbook.write(fileOut);
 		}
 		return targetFile.getAbsolutePath();
