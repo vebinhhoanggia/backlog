@@ -113,6 +113,9 @@ public class BacklogExcel implements GenSchedule {
 	private static final String PATH_IFRONT_TEMPLATE = "%s\\Target_%s\\ifront\\%s";
 	private static final String PATH_DMP_TEMPLATE = "%s\\Target_%s\\dmp\\%s";
 	private static final String PATH_DEFAULT_TEMPLATE = "%s\\Target_%s\\default\\%s";
+	private static final String DEFAULT_PJ_NAME = "Toyama(CTT)";
+	private static final String DEFAULT_PJ_NO = "P00000";
+	private static final String DEFAULT_PJ_CD = "00000000";
 
 	private final String executeTime;
 	private String targetFolder = null;
@@ -608,14 +611,27 @@ public class BacklogExcel implements GenSchedule {
 				.ifPresent(x -> CollectionUtils.emptyIfNull(x.getValue()).stream().findFirst().ifPresent(k -> {
 					CollectionUtils.emptyIfNull(allWrDatas).stream().findFirst().map(PjjyujiDetail::getPjCd)
 							.filter(StringUtils::isNotBlank).ifPresent(val -> {
-								// PJCODE :
+								// PJ-NO ：
 								final var col = getCol(sheet, ROW_PJ_NO_IDX, COL_PJ_NO_IDX);
-								col.setCellValue(val);
+								if (StringUtils.equals(col.getStringCellValue(), DEFAULT_PJ_NO)) {
+									col.setCellValue(val);
+								}
+							});
+					CollectionUtils.emptyIfNull(allWrDatas).stream().findFirst().map(PjjyujiDetail::getPjName)
+							.filter(StringUtils::isNotBlank).ifPresent(val -> {
+								// Schedule Name ：
+								final var row = sheet.getRow(2);
+								final var cell = row.getCell(3);
+								if (StringUtils.equals(cell.getStringCellValue(), DEFAULT_PJ_NAME)) {
+									cell.setCellValue(val);
+								}
 							});
 					Optional.of(k).map(BacklogDetail::getPjCdJp).filter(StringUtils::isNotBlank).ifPresent(val -> {
-						// PJ-NO ：
+						// PJCODE :
 						final var col = getCol(sheet, ROW_PJ_CD_IDX, COL_PJ_NO_IDX);
-						col.setCellValue(val);
+						if (StringUtils.equals(col.getStringCellValue(), DEFAULT_PJ_CD)) {
+							col.setCellValue(val);
+						}
 					});
 				}));
 	}
