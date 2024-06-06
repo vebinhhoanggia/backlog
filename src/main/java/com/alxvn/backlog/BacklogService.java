@@ -323,6 +323,15 @@ public class BacklogService implements BacklogBehavior {
 				final var p = result.get(projectKey);
 				pdList = p.getLeft();
 				bdList = p.getRight();
+//				// ignore if ticket and phase exists in result
+//				if (StringUtils.isBlank(bd.getParentKey()) ||
+//				// Không tồn tại record khác cùng phase
+//						!bdList.stream().anyMatch(x -> (StringUtils.equals(x.getParentKey(), bd.getParentKey()) //
+//								&& StringUtils.equals(x.getMailId(), bd.getMailId()) //
+//								&& StringUtils.equals(x.getProcessOfWr(), bd.getProcessOfWr())))) {
+//				} else {
+//					
+//				}
 				bdList.add(bd);
 			}
 			final var iterator = pds.iterator();

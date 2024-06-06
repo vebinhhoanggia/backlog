@@ -943,7 +943,7 @@ public class BacklogExcel implements GenSchedule {
 			// T/h tồn tại thực hiện cập nhật thông tin, thêm dòng mới, merge cell lại
 			if (isExists) {
 				var increCnt = 0;
-				final var backlogs = getTargetBacklogs(groupedBacklogs, curBacklogParentKey);
+				final var backlogs = reFilterBacklogs(getTargetBacklogs(groupedBacklogs, curBacklogParentKey));
 				if (isSingleRecord) {
 					increCnt = fillWhenExistsSingleRecord(sheet, row, curIdx, indexNo, backlogs, allWrDatas);
 				} else {
@@ -962,7 +962,7 @@ public class BacklogExcel implements GenSchedule {
 				curBacklogParentKey = firstEntry.getKey(); // Lấy ra parent key
 				final var curBacklogs = firstEntry.getValue();
 				final var parentBacklog = curBacklogs.stream().filter(isBacklogParent).findFirst();
-				final var backlogs = curBacklogs.stream().filter(isBacklogDetail).toList();
+				final var backlogs = reFilterBacklogs(curBacklogs.stream().filter(isBacklogDetail).toList());
 
 				var increCnt = 0;
 				if (backlogs.isEmpty() && parentBacklog.isPresent()) {
@@ -1289,6 +1289,37 @@ public class BacklogExcel implements GenSchedule {
 			}
 		}
 		return groupedBacklogs;
+	}
+
+	private List<BacklogDetail> reFilterBacklogs(final List<BacklogDetail> details) {
+		final List<BacklogDetail> result = new ArrayList<>();
+		for (final BacklogDetail bd : details) {
+			final var matchRecordOpt = result.stream()
+					.filter(x -> StringUtils.equals(x.getParentKey(), bd.getParentKey()) //
+							&& StringUtils.equals(x.getMailId(), bd.getMailId()) //
+							&& StringUtils.equals(x.getProcessOfWr(), bd.getProcessOfWr()))
+					.findFirst();
+			if (matchRecordOpt.isPresent()) {
+				final var matchRecord = matchRecordOpt.get();
+				if (bd.getActualHours() != null) {
+					if (matchRecord.getActualHours() != null) {
+						matchRecord.setActualHours(matchRecord.getActualHours().add(bd.getActualHours()));
+					} else {
+						matchRecord.setActualHours(bd.getActualHours());
+					}
+				}
+				if (bd.getEstimatedHours() != null) {
+					if (matchRecord.getEstimatedHours() != null) {
+						matchRecord.setEstimatedHours(matchRecord.getEstimatedHours().add(bd.getEstimatedHours()));
+					} else {
+						matchRecord.setEstimatedHours(bd.getEstimatedHours());
+					}
+				}
+			} else {
+				result.add(bd);
+			}
+		}
+		return result;
 	}
 
 	@Override
