@@ -3,6 +3,8 @@
  */
 package com.alxvn.backlog.util;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -17,7 +19,32 @@ public class Helper {
 		throw new IllegalStateException("Utility class");
 	}
 
+	private static final String[] listAccept = { "SYMPHO", "IFRONT", "KOUJIWEB", "SYMPHO05", "ETSURAN" };
+	private static final List<String> myList = Arrays.asList(listAccept);
+
+	private static String getAnkenNo(final String target, final String content) {
+		final var backlogSymPattern = "(" + target + "-\\d+((\\S*)comment-\\d+)?)";
+		final var patternBacklog = Pattern.compile(backlogSymPattern);
+		final var matcherSymBacklog = patternBacklog.matcher(content);
+		if (matcherSymBacklog.find()) {
+			return StringUtils.defaultString(matcherSymBacklog.group(1));
+		}
+		return StringUtils.EMPTY;
+	}
+
 	public static String getAnkenNo(final String content) {
+
+		// split first space for ticket no
+//		CATV_SCHEDULE-3068 SYMPHO05-1 Q&Aレビュー 
+		final var parts = StringUtils.split(content);
+		if (parts.length > 0) {
+			final var defaultAnkenNo = myList.stream().map(t -> getAnkenNo(t, parts[0])).filter(StringUtils::isNotBlank)
+					.findFirst().orElse(StringUtils.EMPTY);
+			if (StringUtils.isNotBlank(defaultAnkenNo)) {
+				return defaultAnkenNo;
+			}
+		}
+
 		// use for backlog sym
 		final var backlogSymPattern = "(SYMPHO-\\d+((\\S*)comment-\\d+)?)";
 		final var patternBacklog = Pattern.compile(backlogSymPattern);

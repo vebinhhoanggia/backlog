@@ -13,42 +13,30 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public class BacklogProcess {
 
-	private String code;
-	private String name;
+	private String processCd;
+	private String issueType;
 
-	public static BacklogProcess of(BacklogPhase e) {
-		return new BacklogProcess(e);
-	}
-
-	public static BacklogProcess of(String code, String name) {
+	public static BacklogProcess of(final String code, final String issueType) {
 		final var rs = new BacklogProcess();
-		rs.code = code;
-		rs.name = name;
+		rs.processCd = code;
+		rs.issueType = issueType;
 		return rs;
 	}
 
-	public BacklogProcess(BacklogPhase e) {
-		code = e.getCode();
-		name = e.getCode();
+	public final String getProcessCd() {
+		return processCd;
 	}
 
-	public BacklogProcess() {
+	public final void setProcessCd(final String processCd) {
+		this.processCd = processCd;
 	}
 
-	public final String getCode() {
-		return code;
+	public final String getIssueType() {
+		return issueType;
 	}
 
-	public final void setCode(String code) {
-		this.code = code;
-	}
-
-	public final String getName() {
-		return name;
-	}
-
-	public final void setName(String name) {
-		this.name = name;
+	public final void setIssueType(final String issueType) {
+		this.issueType = issueType;
 	}
 
 	@Override

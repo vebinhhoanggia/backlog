@@ -43,12 +43,13 @@ public class BacklogDetail {
 	private String bugCreator;
 	private String bug3rdTest;
 	private String processOfWr;
+	private BacklogProcess process;
 
 	public String getKey() {
 		return key;
 	}
 
-	public void setKey(String key) {
+	public void setKey(final String key) {
 		this.key = key;
 	}
 
@@ -56,7 +57,7 @@ public class BacklogDetail {
 		return ankenNo;
 	}
 
-	public void setAnkenNo(String ankenNo) {
+	public void setAnkenNo(final String ankenNo) {
 		this.ankenNo = ankenNo;
 	}
 
@@ -64,7 +65,7 @@ public class BacklogDetail {
 		return mailId;
 	}
 
-	public void setMailId(String mailId) {
+	public void setMailId(final String mailId) {
 		this.mailId = mailId;
 	}
 
@@ -72,7 +73,7 @@ public class BacklogDetail {
 		return pjCdJp;
 	}
 
-	public void setPjCdJp(String pjCdJp) {
+	public void setPjCdJp(final String pjCdJp) {
 		this.pjCdJp = pjCdJp;
 	}
 
@@ -80,7 +81,7 @@ public class BacklogDetail {
 		return issueType;
 	}
 
-	public void setIssueType(String issueType) {
+	public void setIssueType(final String issueType) {
 		this.issueType = issueType;
 	}
 
@@ -88,7 +89,7 @@ public class BacklogDetail {
 		return subject;
 	}
 
-	public void setSubject(String subject) {
+	public void setSubject(final String subject) {
 		this.subject = subject;
 	}
 
@@ -96,7 +97,7 @@ public class BacklogDetail {
 		return category;
 	}
 
-	public void setCategory(String category) {
+	public void setCategory(final String category) {
 		this.category = category;
 	}
 
@@ -104,7 +105,7 @@ public class BacklogDetail {
 		return version;
 	}
 
-	public void setVersion(String version) {
+	public void setVersion(final String version) {
 		this.version = version;
 	}
 
@@ -112,7 +113,7 @@ public class BacklogDetail {
 		return milestone;
 	}
 
-	public void setMilestone(String milestone) {
+	public void setMilestone(final String milestone) {
 		this.milestone = milestone;
 	}
 
@@ -120,7 +121,7 @@ public class BacklogDetail {
 		return assignee;
 	}
 
-	public void setAssignee(String assignee) {
+	public void setAssignee(final String assignee) {
 		this.assignee = assignee;
 	}
 
@@ -128,7 +129,7 @@ public class BacklogDetail {
 		return parentKey;
 	}
 
-	public void setParentKey(String parentKey) {
+	public void setParentKey(final String parentKey) {
 		this.parentKey = parentKey;
 	}
 
@@ -136,7 +137,7 @@ public class BacklogDetail {
 		return expectedStartDate;
 	}
 
-	public void setExpectedStartDate(LocalDate expectedStartDate) {
+	public void setExpectedStartDate(final LocalDate expectedStartDate) {
 		this.expectedStartDate = expectedStartDate;
 	}
 
@@ -144,7 +145,7 @@ public class BacklogDetail {
 		return expectedDueDate;
 	}
 
-	public void setExpectedDueDate(LocalDate expectedDueDate) {
+	public void setExpectedDueDate(final LocalDate expectedDueDate) {
 		this.expectedDueDate = expectedDueDate;
 	}
 
@@ -152,7 +153,7 @@ public class BacklogDetail {
 		return actualStartDate;
 	}
 
-	public void setActualStartDate(LocalDate actualStartDate) {
+	public void setActualStartDate(final LocalDate actualStartDate) {
 		this.actualStartDate = actualStartDate;
 	}
 
@@ -160,7 +161,7 @@ public class BacklogDetail {
 		return actualDueDate;
 	}
 
-	public void setActualDueDate(LocalDate actualDueDate) {
+	public void setActualDueDate(final LocalDate actualDueDate) {
 		this.actualDueDate = actualDueDate;
 	}
 
@@ -168,7 +169,7 @@ public class BacklogDetail {
 		return estimatedHours;
 	}
 
-	public void setEstimatedHours(BigDecimal estimatedHours) {
+	public void setEstimatedHours(final BigDecimal estimatedHours) {
 		this.estimatedHours = estimatedHours;
 	}
 
@@ -176,7 +177,7 @@ public class BacklogDetail {
 		return actualHours;
 	}
 
-	public void setActualHours(BigDecimal actualHours) {
+	public void setActualHours(final BigDecimal actualHours) {
 		this.actualHours = actualHours;
 	}
 
@@ -184,7 +185,7 @@ public class BacklogDetail {
 		return status;
 	}
 
-	public void setStatus(String status) {
+	public void setStatus(final String status) {
 		this.status = status;
 	}
 
@@ -192,7 +193,7 @@ public class BacklogDetail {
 		return targetCustomer;
 	}
 
-	public void setTargetCustomer(String targetCustomer) {
+	public void setTargetCustomer(final String targetCustomer) {
 		this.targetCustomer = targetCustomer;
 	}
 
@@ -200,7 +201,7 @@ public class BacklogDetail {
 		return progress;
 	}
 
-	public void setProgress(String progress) {
+	public void setProgress(final String progress) {
 		this.progress = progress;
 	}
 
@@ -208,7 +209,7 @@ public class BacklogDetail {
 		return expectedDeliveryDate;
 	}
 
-	public void setExpectedDeliveryDate(LocalDate expectedDeliveryDate) {
+	public void setExpectedDeliveryDate(final LocalDate expectedDeliveryDate) {
 		this.expectedDeliveryDate = expectedDeliveryDate;
 	}
 
@@ -216,7 +217,7 @@ public class BacklogDetail {
 		return actualDeliveryDate;
 	}
 
-	public void setActualDeliveryDate(LocalDate actualDeliveryDate) {
+	public void setActualDeliveryDate(final LocalDate actualDeliveryDate) {
 		this.actualDeliveryDate = actualDeliveryDate;
 	}
 
@@ -224,7 +225,7 @@ public class BacklogDetail {
 		return bugCategory;
 	}
 
-	public void setBugCategory(String bugCategory) {
+	public void setBugCategory(final String bugCategory) {
 		this.bugCategory = bugCategory;
 	}
 
@@ -232,7 +233,7 @@ public class BacklogDetail {
 		return bugOrigin;
 	}
 
-	public void setBugOrigin(String bugOrigin) {
+	public void setBugOrigin(final String bugOrigin) {
 		this.bugOrigin = bugOrigin;
 	}
 
@@ -240,7 +241,7 @@ public class BacklogDetail {
 		return bugCreator;
 	}
 
-	public void setBugCreator(String bugCreator) {
+	public void setBugCreator(final String bugCreator) {
 		this.bugCreator = bugCreator;
 	}
 
@@ -248,7 +249,7 @@ public class BacklogDetail {
 		return bug3rdTest;
 	}
 
-	public void setBug3rdTest(String bug3rdTest) {
+	public void setBug3rdTest(final String bug3rdTest) {
 		this.bug3rdTest = bug3rdTest;
 	}
 
@@ -256,8 +257,16 @@ public class BacklogDetail {
 		return processOfWr;
 	}
 
-	public void setProcessOfWr(String processOfWr) {
+	public void setProcessOfWr(final String processOfWr) {
 		this.processOfWr = processOfWr;
+	}
+
+	public BacklogProcess getProcess() {
+		return process;
+	}
+
+	public void setProcess(final BacklogProcess process) {
+		this.process = process;
 	}
 
 	public static class Builder {
@@ -268,138 +277,143 @@ public class BacklogDetail {
 			backlogDetail = new BacklogDetail();
 		}
 
-		public final Builder key(String key) {
+		public final Builder key(final String key) {
 			backlogDetail.key = key;
 			return this;
 		}
 
-		public final Builder ankenNo(String ankenNo) {
+		public final Builder ankenNo(final String ankenNo) {
 			backlogDetail.ankenNo = ankenNo;
 			return this;
 		}
 
-		public final Builder mailId(String mailId) {
+		public final Builder mailId(final String mailId) {
 			backlogDetail.mailId = mailId;
 			return this;
 		}
 
-		public final Builder pjCdJp(String pjCdJp) {
+		public final Builder pjCdJp(final String pjCdJp) {
 			backlogDetail.pjCdJp = pjCdJp;
 			return this;
 		}
 
-		public final Builder issueType(String issueType) {
+		public final Builder issueType(final String issueType) {
 			backlogDetail.issueType = issueType;
 			return this;
 		}
 
-		public final Builder subject(String subject) {
+		public final Builder subject(final String subject) {
 			backlogDetail.subject = subject;
 			return this;
 		}
 
-		public final Builder category(String category) {
+		public final Builder category(final String category) {
 			backlogDetail.category = category;
 			return this;
 		}
 
-		public final Builder version(String version) {
+		public final Builder version(final String version) {
 			backlogDetail.version = version;
 			return this;
 		}
 
-		public final Builder milestone(String milestone) {
+		public final Builder milestone(final String milestone) {
 			backlogDetail.milestone = milestone;
 			return this;
 		}
 
-		public final Builder assignee(String assignee) {
+		public final Builder assignee(final String assignee) {
 			backlogDetail.assignee = assignee;
 			return this;
 		}
 
-		public final Builder parentKey(String parentKey) {
+		public final Builder parentKey(final String parentKey) {
 			backlogDetail.parentKey = parentKey;
 			return this;
 		}
 
-		public final Builder expectedStartDate(LocalDate expectedStartDate) {
+		public final Builder expectedStartDate(final LocalDate expectedStartDate) {
 			backlogDetail.expectedStartDate = expectedStartDate;
 			return this;
 		}
 
-		public final Builder expectedDueDate(LocalDate expectedDueDate) {
+		public final Builder expectedDueDate(final LocalDate expectedDueDate) {
 			backlogDetail.expectedDueDate = expectedDueDate;
 			return this;
 		}
 
-		public final Builder actualStartDate(LocalDate actualStartDate) {
+		public final Builder actualStartDate(final LocalDate actualStartDate) {
 			backlogDetail.actualStartDate = actualStartDate;
 			return this;
 		}
 
-		public final Builder actualDueDate(LocalDate actualDueDate) {
+		public final Builder actualDueDate(final LocalDate actualDueDate) {
 			backlogDetail.actualDueDate = actualDueDate;
 			return this;
 		}
 
-		public final Builder estimatedHours(BigDecimal estimatedHours) {
+		public final Builder estimatedHours(final BigDecimal estimatedHours) {
 			backlogDetail.estimatedHours = estimatedHours;
 			return this;
 		}
 
-		public final Builder actualHours(BigDecimal actualHours) {
+		public final Builder actualHours(final BigDecimal actualHours) {
 			backlogDetail.actualHours = actualHours;
 			return this;
 		}
 
-		public final Builder status(String status) {
+		public final Builder status(final String status) {
 			backlogDetail.status = status;
 			return this;
 		}
 
-		public final Builder targetCustomer(String targetCustomer) {
+		public final Builder targetCustomer(final String targetCustomer) {
 			backlogDetail.targetCustomer = targetCustomer;
 			return this;
 		}
 
-		public final Builder progress(String progress) {
+		public final Builder progress(final String progress) {
 			backlogDetail.progress = progress;
 			return this;
 		}
 
-		public final Builder expectedDeliveryDate(LocalDate expectedDeliveryDate) {
+		public final Builder expectedDeliveryDate(final LocalDate expectedDeliveryDate) {
 			backlogDetail.expectedDeliveryDate = expectedDeliveryDate;
 			return this;
 		}
 
-		public final Builder actualDeliveryDate(LocalDate actualDeliveryDate) {
+		public final Builder actualDeliveryDate(final LocalDate actualDeliveryDate) {
 			backlogDetail.actualDeliveryDate = actualDeliveryDate;
 			return this;
 		}
 
-		public final Builder bugCategory(String bugCategory) {
+		public final Builder bugCategory(final String bugCategory) {
 			backlogDetail.bugCategory = bugCategory;
 			return this;
 		}
 
-		public final Builder bugOrigin(String bugOrigin) {
+		public final Builder bugOrigin(final String bugOrigin) {
 			backlogDetail.bugOrigin = bugOrigin;
 			return this;
 		}
 
-		public final Builder bugCreator(String bugCreator) {
+		public final Builder bugCreator(final String bugCreator) {
 			backlogDetail.bugCreator = bugCreator;
 			return this;
 		}
 
-		public final Builder bug3rdTest(String bug3rdTest) {
+		public final Builder bug3rdTest(final String bug3rdTest) {
 			backlogDetail.bug3rdTest = bug3rdTest;
 			return this;
 		}
 
-		public final Builder processOfWr(String processOfWr) {
+		public final Builder processOfWr(final String processOfWr) {
 			backlogDetail.processOfWr = processOfWr;
+			return this;
+		}
+
+		public final Builder process(final BacklogProcess process) {
+			backlogDetail.process = process;
 			return this;
 		}
 

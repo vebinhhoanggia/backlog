@@ -55,6 +55,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.alxvn.backlog.behavior.BacklogBehavior;
 import com.alxvn.backlog.dto.BacklogDetail;
+import com.alxvn.backlog.dto.BacklogProcess;
 import com.alxvn.backlog.dto.CustomerTarget;
 import com.alxvn.backlog.dto.PjjyujiDetail;
 import com.alxvn.backlog.dto.WorkingProcess;
@@ -309,7 +310,8 @@ public class BacklogService implements BacklogBehavior {
 			// for test
 //			final String[] listAccept = { "05000271", "03010939", "03010931", "03010737", "03010933", "05000309",
 //					"03010791", "03010823", "", "03007954", "03008756" };
-			final String[] listAccept = { "05000271" };
+//			final String[] listAccept = { "05000271" };
+			final String[] listAccept = { "03011047" };
 			final List<String> myList = Arrays.asList(listAccept);
 
 			if (!myList.contains(pjCdJp)) {
@@ -323,15 +325,6 @@ public class BacklogService implements BacklogBehavior {
 				final var p = result.get(projectKey);
 				pdList = p.getLeft();
 				bdList = p.getRight();
-//				// ignore if ticket and phase exists in result
-//				if (StringUtils.isBlank(bd.getParentKey()) ||
-//				// Không tồn tại record khác cùng phase
-//						!bdList.stream().anyMatch(x -> (StringUtils.equals(x.getParentKey(), bd.getParentKey()) //
-//								&& StringUtils.equals(x.getMailId(), bd.getMailId()) //
-//								&& StringUtils.equals(x.getProcessOfWr(), bd.getProcessOfWr())))) {
-//				} else {
-//					
-//				}
 				bdList.add(bd);
 			}
 			final var iterator = pds.iterator();
@@ -611,6 +604,8 @@ public class BacklogService implements BacklogBehavior {
 		final var bugCreator = columnValues.get("課題発生者");
 		final var bug3rdTest = columnValues.get("課題発生第三者");
 
+		final var process = BacklogProcess.of(processOfWr, issueType);
+
 		final var ankenNo = StringUtils.defaultIfBlank(targetTaskId, Helper.getAnkenNo(subject));
 		return new BacklogDetail.Builder().key(backlogKey) //
 				.issueType(issueType) //
@@ -636,7 +631,8 @@ public class BacklogService implements BacklogBehavior {
 				.bugOrigin(bugOrigin) //
 				.bugCreator(bugCreator) //
 				.bug3rdTest(bug3rdTest) //
-				.processOfWr(processOfWr)
+				.processOfWr(processOfWr) //
+				.process(process) //
 				/**/
 				.build();
 	}
@@ -667,7 +663,7 @@ public class BacklogService implements BacklogBehavior {
 				for (final Map.Entry<String, Integer> entry : columnIndexMap.entrySet()) {
 					final var key = entry.getKey();
 					final var val = entry.getValue();
-					columnValues.put(key, row[val]);
+					columnValues.put(key, StringUtils.trim(row[val]));
 				}
 				result.add(getRecord(columnValues));
 			}

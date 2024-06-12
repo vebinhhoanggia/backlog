@@ -53,9 +53,11 @@ import org.slf4j.LoggerFactory;
 import com.alxvn.backlog.BacklogService;
 import com.alxvn.backlog.behavior.GenSchedule;
 import com.alxvn.backlog.dto.BacklogDetail;
+import com.alxvn.backlog.dto.BacklogProcess;
 import com.alxvn.backlog.dto.CustomerTarget;
 import com.alxvn.backlog.dto.PjjyujiDetail;
 import com.alxvn.backlog.dto.WorkingPhase;
+import com.alxvn.backlog.dto.WorkingProcess;
 import com.alxvn.backlog.util.ScheduleHelper;
 
 /**
@@ -243,13 +245,26 @@ public class BacklogExcel implements GenSchedule {
 		return Date.from(zonedDateTime.toInstant());
 	}
 
-	private Optional<WorkingPhase> getOperation(final BacklogDetail backlogDetail) {
+	private Optional<WorkingProcess> getOperation(final BacklogDetail backlogDetail) {
 		final var processOfWr = backlogDetail.getProcessOfWr();
 		final var processOfWrCd = extracProcessOfWrCd(processOfWr);
 		if (StringUtils.isBlank(processOfWrCd)) {
 			return Optional.ofNullable(null);
 		}
-		return Optional.ofNullable(WorkingPhase.fromString(processOfWrCd));
+
+		return Optional.ofNullable(WorkingProcess.of(processOfWrCd, Optional.ofNullable(backlogDetail)
+				.map(BacklogDetail::getProcess).map(BacklogProcess::getIssueType).orElse(StringUtils.EMPTY)));
+	}
+
+	private Optional<WorkingProcess> getSchOperation(final BacklogDetail backlogDetail) {
+		final var processOfWr = backlogDetail.getProcessOfWr();
+		final var processOfWrCd = extracProcessOfWrCd(processOfWr);
+		if (StringUtils.isBlank(processOfWrCd)) {
+			return Optional.ofNullable(null);
+		}
+		final var curIssueType = Optional.ofNullable(backlogDetail).map(BacklogDetail::getProcess)
+				.map(BacklogProcess::getIssueType).orElse(StringUtils.EMPTY);
+		return Optional.ofNullable(WorkingProcess.of(processOfWrCd, curIssueType));
 	}
 
 	private double getProgress(final String backlogProgress) {
@@ -291,7 +306,7 @@ public class BacklogExcel implements GenSchedule {
 			curCel.setCellValue(ankenNo);
 		}
 		// 工程 Operation
-		final var operation = getOperation(backlogDetail).map(WorkingPhase::getName).orElse(StringUtils.EMPTY);
+		final var operation = getSchOperation(backlogDetail).map(WorkingProcess::getName).orElse(StringUtils.EMPTY);
 		curCel = getCell(curRow, COL_OPERATION_CHAR);
 		curCel.setCellValue(operation);
 		// 担当 PIC
@@ -348,22 +363,23 @@ public class BacklogExcel implements GenSchedule {
 
 		final var ankenNo = Optional.ofNullable(backlogDetail).map(BacklogDetail::getAnkenNo).orElse(StringUtils.EMPTY);
 		final var pic = backlogDetail.getMailId();
-		final var operation = getOperation(backlogDetail).map(WorkingPhase::getName).orElse(StringUtils.EMPTY);
+		final var operation = getOperation(backlogDetail);
 
 		// fill working report data
 		return fillWrData(sheet, curRow, ankenNo, pic, operation, wrTargets);
 	}
 
 	private Collection<PjjyujiDetail> fillWrData(final Sheet sheet, final Row curRow, final String ankenNo,
-			final String pic, final String operation, final List<PjjyujiDetail> wrTargets) {
+			final String pic, final Optional<WorkingProcess> operation, final List<PjjyujiDetail> wrTargets) {
+		// filter by mail, ticket no, process phase
 		final var wrOfRow = CollectionUtils.emptyIfNull(wrTargets).stream().filter(w -> {
 			final var ticketNo = w.getAnkenNo();
 			final var mailId = w.getMailId();
 			final var processCd = w.getProcess().getCode();
-			final var wrOpeationName = Optional.ofNullable(WorkingPhase.fromString(processCd))
-					.map(WorkingPhase::getName).orElse(StringUtils.EMPTY);
+			final var wrOpeationCd = Optional.ofNullable(WorkingPhase.fromString(processCd)).map(WorkingPhase::getCode)
+					.orElse(StringUtils.EMPTY);
 			return StringUtils.equals(ankenNo, ticketNo) && StringUtils.equals(pic, mailId)
-					&& StringUtils.equals(wrOpeationName, operation);
+					&& StringUtils.equals(wrOpeationCd, operation.map(WorkingProcess::getCode).orElse(null));
 		}).toList();
 
 		final Map<LocalDate, Integer> groupedData = wrOfRow.stream().collect(
