@@ -44,6 +44,7 @@ public class BacklogDetail {
 	private String bug3rdTest;
 	private String processOfWr;
 	private BacklogProcess process;
+	private String targetProject;
 
 	public String getKey() {
 		return key;
@@ -269,6 +270,14 @@ public class BacklogDetail {
 		this.process = process;
 	}
 
+	public String getTargetProject() {
+		return targetProject;
+	}
+
+	public void setTargetProject(final String targetProject) {
+		this.targetProject = targetProject;
+	}
+
 	public static class Builder {
 
 		private final BacklogDetail backlogDetail;
@@ -414,6 +423,11 @@ public class BacklogDetail {
 
 		public final Builder process(final BacklogProcess process) {
 			backlogDetail.process = process;
+			return this;
+		}
+
+		public final Builder targetProject(final String targetProject) {
+			backlogDetail.targetProject = targetProject;
 			return this;
 		}
 

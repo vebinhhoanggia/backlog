@@ -20,10 +20,10 @@ public class Helper {
 	}
 
 	private static final String[] listAccept = { "SYMPHO", "IFRONT", "KOUJIWEB", "SYMPHO05", "ETSURAN" };
-	private static final List<String> myList = Arrays.asList(listAccept);
+	public static final List<String> PROJECT_ACCEPT = Arrays.asList(listAccept);
 
 	private static String getAnkenNo(final String target, final String content) {
-		final var backlogSymPattern = "(" + target + "-\\d+((\\S*)comment-\\d+)?)";
+		final var backlogSymPattern = "(" + target + "-\\d+((\\S*)comment-[^ ]+)?)";
 		final var patternBacklog = Pattern.compile(backlogSymPattern);
 		final var matcherSymBacklog = patternBacklog.matcher(content);
 		if (matcherSymBacklog.find()) {
@@ -38,22 +38,22 @@ public class Helper {
 //		CATV_SCHEDULE-3068 SYMPHO05-1 Q&Aレビュー 
 		final var parts = StringUtils.split(content);
 		if (parts.length > 0) {
-			final var defaultAnkenNo = myList.stream().map(t -> getAnkenNo(t, parts[0])).filter(StringUtils::isNotBlank)
-					.findFirst().orElse(StringUtils.EMPTY);
+			final var defaultAnkenNo = PROJECT_ACCEPT.stream().map(t -> getAnkenNo(t, parts[0]))
+					.filter(StringUtils::isNotBlank).findFirst().orElse(StringUtils.EMPTY);
 			if (StringUtils.isNotBlank(defaultAnkenNo)) {
 				return defaultAnkenNo;
 			}
 		}
 
 		// use for backlog sym
-		final var backlogSymPattern = "(SYMPHO-\\d+((\\S*)comment-\\d+)?)";
+		final var backlogSymPattern = "(SYMPHO-\\d+((\\S*)comment-[^ ]+)?)";
 		final var patternBacklog = Pattern.compile(backlogSymPattern);
 		final var matcherSymBacklog = patternBacklog.matcher(content);
 		if (matcherSymBacklog.find()) {
 			return StringUtils.defaultString(matcherSymBacklog.group(1));
 		}
 		// use for backlog ifront
-		final var backlogifrontPattern = "(IFRONT-\\d+((\\S*)comment-\\d+)?)";
+		final var backlogifrontPattern = "(IFRONT-\\d+((\\S*)comment-[^ ]+)?)";
 		final var patternIFrontBacklog = Pattern.compile(backlogifrontPattern);
 		final var matcherIfrontBacklog = patternIFrontBacklog.matcher(content);
 		if (matcherIfrontBacklog.find()) {
@@ -61,7 +61,7 @@ public class Helper {
 		}
 
 		// using redmine
-		final var pattern = Pattern.compile("(#?\\d+((\\S*)comment-\\d+)?)");
+		final var pattern = Pattern.compile("(#?\\d+((\\S*)comment-[^ ]+)?)");
 		final var matcher = pattern.matcher(content);
 		if (matcher.find()) {
 			return StringUtils.defaultString(matcher.group(1));

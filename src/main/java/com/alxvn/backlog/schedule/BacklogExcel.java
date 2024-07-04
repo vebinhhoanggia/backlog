@@ -54,7 +54,6 @@ import com.alxvn.backlog.BacklogService;
 import com.alxvn.backlog.behavior.GenSchedule;
 import com.alxvn.backlog.dto.BacklogDetail;
 import com.alxvn.backlog.dto.BacklogProcess;
-import com.alxvn.backlog.dto.CustomerTarget;
 import com.alxvn.backlog.dto.PjjyujiDetail;
 import com.alxvn.backlog.dto.WorkingPhase;
 import com.alxvn.backlog.dto.WorkingProcess;
@@ -111,10 +110,7 @@ public class BacklogExcel implements GenSchedule {
 	private static final String SCHEDULE_TEMPLATE_PATH = "templates/QDA-0222a_プロジェクト管理表.xlsm";
 
 	private static final String PATH_ROOT_FOLDER = "D:\\Doc\\Backlog";
-	private static final String PATH_SYM_TEMPLATE = "%s\\Target_%s\\sym\\%s";
-	private static final String PATH_IFRONT_TEMPLATE = "%s\\Target_%s\\ifront\\%s";
-	private static final String PATH_DMP_TEMPLATE = "%s\\Target_%s\\dmp\\%s";
-	private static final String PATH_DEFAULT_TEMPLATE = "%s\\Target_%s\\default\\%s";
+	private static final String PATH_DEFAULT_TEMPLATE = "%s\\Target_%s\\%s\\%s";
 	private static final String DEFAULT_PJ_NAME = "Toyama(CTT)";
 	private static final String DEFAULT_PJ_NO = "P00000";
 	private static final String DEFAULT_PJ_CD = "00000000";
@@ -129,22 +125,6 @@ public class BacklogExcel implements GenSchedule {
 
 	public String getPathRootFolder() {
 		return targetFolder;
-	}
-
-	public String getSymTemplatePath(final String projectCd) {
-		return String.format(PATH_SYM_TEMPLATE, PATH_ROOT_FOLDER, executeTime, projectCd);
-	}
-
-	public String getiFrontTemplatePath(final String projectCd) {
-		return String.format(PATH_IFRONT_TEMPLATE, PATH_ROOT_FOLDER, executeTime, projectCd);
-	}
-
-	public String getDmpTemplatePath(final String projectCd) {
-		return String.format(PATH_DMP_TEMPLATE, PATH_ROOT_FOLDER, executeTime, projectCd);
-	}
-
-	public String getDefaultTemplatePath(final String projectCd) {
-		return String.format(PATH_DEFAULT_TEMPLATE, PATH_ROOT_FOLDER, executeTime, projectCd);
 	}
 
 	private boolean compareCellRangeAddresses(final CellRangeAddress range1, final CellRangeAddress range2) {
@@ -1164,23 +1144,16 @@ public class BacklogExcel implements GenSchedule {
 		}
 	}
 
-	private Path createFolderStoreSchedule(final CustomerTarget projecType, final String projectCd) throws IOException {
-
-		final var projectScheduleTemplate = switch (projecType) {
-		case IFRONT -> PATH_IFRONT_TEMPLATE;
-		case SYMPHONIZER -> PATH_SYM_TEMPLATE;
-		case DMP -> PATH_DMP_TEMPLATE;
-		default -> PATH_DEFAULT_TEMPLATE;
-		};
-		final var projectSchPath = Paths
-				.get(String.format(projectScheduleTemplate, PATH_ROOT_FOLDER, executeTime, projectCd));
+	private Path createFolderStoreSchedule(final String projecType, final String projectCd) throws IOException {
+		final var projectSchPath = Paths.get(String.format(PATH_DEFAULT_TEMPLATE, PATH_ROOT_FOLDER, executeTime,
+				StringUtils.upperCase(projecType), projectCd));
 		if (!Files.exists(projectSchPath)) {
 			Files.createDirectories(projectSchPath);
 		}
 		return projectSchPath;
 	}
 
-	public void createSchedule(final CustomerTarget projecType, final String projectCd, final List<PjjyujiDetail> pds,
+	public void createSchedule(final String projecType, final String projectCd, final List<PjjyujiDetail> pds,
 			final List<BacklogDetail> bds) throws IOException {
 		log.debug("Bat dau tao schedule: {} - {}", projecType, projectCd);
 

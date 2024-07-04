@@ -303,7 +303,7 @@ public class BacklogService implements BacklogBehavior {
 	private Map<Pair<CustomerTarget, String>, Pair<List<PjjyujiDetail>, List<BacklogDetail>>> getMapProject(
 			final List<PjjyujiDetail> pds, final List<BacklogDetail> bis) {
 //		<PJCD, PJCDJP>,
-		final Map<Pair<CustomerTarget, String>, Pair<List<PjjyujiDetail>, List<BacklogDetail>>> result = new HashMap<>();
+		final Map<Pair<String, String>, Pair<List<PjjyujiDetail>, List<BacklogDetail>>> result = new HashMap<>();
 		for (final BacklogDetail bd : bis) {
 			final var pjCdJp = bd.getPjCdJp();
 			final var cusTarget = resolveTarget(bd);
@@ -318,7 +318,7 @@ public class BacklogService implements BacklogBehavior {
 //				continue;
 			}
 
-			final Pair<CustomerTarget, String> projectKey = Pair.of(cusTarget, pjCdJp);
+			final Pair<String, String> projectKey = Pair.of(cusTarget, pjCdJp);
 			List<PjjyujiDetail> pdList = new ArrayList<>();
 			List<BacklogDetail> bdList = new ArrayList<>();
 			if (result.containsKey(projectKey)) {
@@ -344,7 +344,7 @@ public class BacklogService implements BacklogBehavior {
 		}
 
 		// Create a TreeMap to store the sorted map
-		final Map<Pair<CustomerTarget, String>, Pair<List<PjjyujiDetail>, List<BacklogDetail>>> sortedResult = new TreeMap<>(
+		final Map<Pair<String, String>, Pair<List<PjjyujiDetail>, List<BacklogDetail>>> sortedResult = new TreeMap<>(
 				(pair1, pair2) -> {
 					// Compare the CustomerTarget objects
 					final var targetComparison = pair1.getLeft().compareTo(pair2.getLeft());
@@ -607,6 +607,14 @@ public class BacklogService implements BacklogBehavior {
 		final var process = BacklogProcess.of(processOfWr, issueType);
 
 		final var ankenNo = StringUtils.defaultIfBlank(targetTaskId, Helper.getAnkenNo(subject));
+		String targetProject = null;
+		final var parts = StringUtils.split(ankenNo, "-");
+		if (parts.length > 0) {
+			targetProject = parts[0];
+		} else {
+			targetProject = targetCustomer;
+		}
+
 		return new BacklogDetail.Builder().key(backlogKey) //
 				.issueType(issueType) //
 				.ankenNo(ankenNo) //
@@ -626,6 +634,7 @@ public class BacklogService implements BacklogBehavior {
 				.actualHours(StringUtils.isNotBlank(actualHours) ? new BigDecimal(actualHours) : null) //
 				.status(status) //
 				.targetCustomer(targetCustomer) //
+				.targetProject(targetProject) //
 				.progress(progress) //
 				.bugCategory(bugCategory) //
 				.bugOrigin(bugOrigin) //
@@ -719,19 +728,22 @@ public class BacklogService implements BacklogBehavior {
 	}
 
 	@Override
-	public CustomerTarget resolveTarget(final BacklogDetail bd) {
+	public String resolveTarget(final BacklogDetail bd) {
+		if (Helper.PROJECT_ACCEPT.stream().anyMatch(t -> StringUtils.equalsIgnoreCase(t, bd.getTargetProject()))) {
+			return bd.getTargetProject();
+		}
 		var cusTarget = CustomerTarget.NONE;
 		final var milestone = bd.getMilestone();
 		final var targetCustomer = bd.getTargetCustomer();
 		if (StringUtils.isBlank(targetCustomer)) {
 			if (StringUtils.containsIgnoreCase(milestone, "sym")) {
-				cusTarget = CustomerTarget.SYMPHONIZER;
+				cusTarget = CustomerTarget.SYMPHO;
 			} else if (StringUtils.containsIgnoreCase(milestone, "i-front")
 					|| StringUtils.containsIgnoreCase(milestone, "ifront")) {
 				cusTarget = CustomerTarget.IFRONT;
 			}
 		} else if (StringUtils.containsIgnoreCase(targetCustomer, "sym")) {
-			cusTarget = CustomerTarget.SYMPHONIZER;
+			cusTarget = CustomerTarget.SYMPHO;
 		} else if (StringUtils.containsIgnoreCase(targetCustomer, "i-front")
 				|| StringUtils.containsIgnoreCase(targetCustomer, "ifront")) {
 			cusTarget = CustomerTarget.IFRONT;
@@ -739,7 +751,8 @@ public class BacklogService implements BacklogBehavior {
 				|| StringUtils.containsIgnoreCase(targetCustomer, "katch")) {
 			cusTarget = CustomerTarget.DMP;
 		}
-		return cusTarget;
+		return cusTarget.toString();
+
 	}
 
 }
