@@ -178,7 +178,7 @@ public class BacklogService implements BacklogBehavior {
 			cleanRootFolderSchedule(util.getPathRootFolder());
 		}
 
-		for (final Map.Entry<Pair<CustomerTarget, String>, Pair<List<PjjyujiDetail>, List<BacklogDetail>>> entry : projectMap
+		for (final Map.Entry<Pair<String, String>, Pair<List<PjjyujiDetail>, List<BacklogDetail>>> entry : projectMap
 				.entrySet()) {
 			final var key = entry.getKey();
 			final var val = entry.getValue();
@@ -300,7 +300,7 @@ public class BacklogService implements BacklogBehavior {
 		}
 	}
 
-	private Map<Pair<CustomerTarget, String>, Pair<List<PjjyujiDetail>, List<BacklogDetail>>> getMapProject(
+	private Map<Pair<String, String>, Pair<List<PjjyujiDetail>, List<BacklogDetail>>> getMapProject(
 			final List<PjjyujiDetail> pds, final List<BacklogDetail> bis) {
 //		<PJCD, PJCDJP>,
 		final Map<Pair<String, String>, Pair<List<PjjyujiDetail>, List<BacklogDetail>>> result = new HashMap<>();
@@ -331,7 +331,8 @@ public class BacklogService implements BacklogBehavior {
 			while (iterator.hasNext()) {
 				final var item = iterator.next();
 				final var wrProjectCdJp = item.getPjCdJp();
-				if (StringUtils.equals(pjCdJp, wrProjectCdJp)) {
+				if (StringUtils.equals(pjCdJp, wrProjectCdJp)
+						&& StringUtils.equals(item.getTargetProject(), bd.getTargetProject())) {
 					pdList.add(item);
 					iterator.remove(); // remove sau khi thỏa điều kiện
 				}
@@ -342,6 +343,8 @@ public class BacklogService implements BacklogBehavior {
 			}
 			result.put(projectKey, Pair.of(pdList, bdList));
 		}
+
+		result.put(Pair.of(CustomerTarget.NONE.toString(), "000000MCS"), Pair.of(pds, new ArrayList<>()));
 
 		// Create a TreeMap to store the sorted map
 		final Map<Pair<String, String>, Pair<List<PjjyujiDetail>, List<BacklogDetail>>> sortedResult = new TreeMap<>(
@@ -425,6 +428,9 @@ public class BacklogService implements BacklogBehavior {
 				final var minute3 = columnValues.get("法定休日残業(分)");
 				final var minute4 = columnValues.get("法定祝日残業時間(分)");
 				final var minute5 = columnValues.get("深夜残業(分)");
+				final var ankenNo = Helper.getAnkenNo(content);
+
+				final var targetProject = Helper.getTargetProject(ankenNo, null);
 
 				final var detail = new PjjyujiDetail.Builder()
 						/**/
@@ -446,7 +452,9 @@ public class BacklogService implements BacklogBehavior {
 						/**/
 						.setContent(content)
 						/**/
-						.setAnkenNo(Helper.getAnkenNo(content))
+						.setAnkenNo(ankenNo)
+						/**/
+						.setTargetProject(targetProject)
 						/**/
 						.setMinute(WorkingReportHelper.sumMinute(minute1, minute2, minute3, minute4, minute5))
 						/**/
@@ -607,13 +615,7 @@ public class BacklogService implements BacklogBehavior {
 		final var process = BacklogProcess.of(processOfWr, issueType);
 
 		final var ankenNo = StringUtils.defaultIfBlank(targetTaskId, Helper.getAnkenNo(subject));
-		String targetProject = null;
-		final var parts = StringUtils.split(ankenNo, "-");
-		if (parts.length > 0) {
-			targetProject = parts[0];
-		} else {
-			targetProject = targetCustomer;
-		}
+		final var targetProject = Helper.getTargetProject(ankenNo, targetCustomer);
 
 		return new BacklogDetail.Builder().key(backlogKey) //
 				.issueType(issueType) //

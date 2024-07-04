@@ -26,6 +26,7 @@ public class PjjyujiDetail {
 	private String content;
 	private String ankenNo;
 	private Integer minute;
+	private String targetProject;
 
 	public static class Builder {
 		private String id;
@@ -39,71 +40,77 @@ public class PjjyujiDetail {
 		private String content;
 		private String ankenNo;
 		private Integer minute;
+		private String targetProject;
 
-		public final Builder setMailId(String mailId) {
+		public final Builder setMailId(final String mailId) {
 			this.mailId = mailId;
 			return this;
 		}
 
-		public final Builder setName(String name) {
+		public final Builder setName(final String name) {
 			this.name = name;
 			return this;
 		}
 
-		public final Builder setId(String id) {
+		public final Builder setId(final String id) {
 			this.id = id;
 			return this;
 		}
 
-		public final Builder setTargetYmd(LocalDate targetYmd) {
+		public final Builder setTargetYmd(final LocalDate targetYmd) {
 			this.targetYmd = targetYmd;
 			return this;
 		}
 
-		public final Builder setPjCd(String pjCd) {
+		public final Builder setPjCd(final String pjCd) {
 			this.pjCd = pjCd;
 			return this;
 		}
 
-		public final Builder setPjCdJp(String pjCdJp) {
+		public final Builder setPjCdJp(final String pjCdJp) {
 			this.pjCdJp = pjCdJp;
 			return this;
 		}
 
-		public final Builder setPjName(String pjName) {
+		public final Builder setPjName(final String pjName) {
 			this.pjName = pjName;
 			return this;
 		}
 
-		public final Builder setProcess(WorkingProcess process) {
+		public final Builder setProcess(final WorkingProcess process) {
 			this.process = process;
 			return this;
 		}
 
-		public final Builder setContent(String content) {
+		public final Builder setContent(final String content) {
 			this.content = content;
 			return this;
 		}
 
-		public final Builder setAnkenNo(String ankenNo) {
+		public final Builder setAnkenNo(final String ankenNo) {
 			this.ankenNo = ankenNo;
 			return this;
 		}
 
-		public final Builder setMinute(Integer minute) {
+		public final Builder setMinute(final Integer minute) {
 			this.minute = minute;
+			return this;
+		}
+
+		public final Builder setTargetProject(final String targetProject) {
+			this.targetProject = targetProject;
 			return this;
 		}
 
 		public PjjyujiDetail build() {
 			return new PjjyujiDetail(id, name, mailId, targetYmd, pjCd, pjCdJp, pjName, process, content, ankenNo,
-					minute);
+					minute, targetProject);
 		}
 	}
 
 	private PjjyujiDetail(final String id, final String name, final String mailId, final LocalDate targetYmd,
 			final String pjCd, final String pjCdJp, final String pjName, final WorkingProcess process,
-			final String content, final String ankenNo, final Integer minute) {
+			final String content, final String ankenNo, final Integer minute, final String targetProject) {
 		this.id = id;
 		this.name = name;
 		this.mailId = mailId;
@@ -115,13 +122,14 @@ public class PjjyujiDetail {
 		this.content = content;
 		this.ankenNo = ankenNo;
 		this.minute = minute;
+		this.targetProject = targetProject;
 	}
 
 	public final String getId() {
 		return id;
 	}
 
-	public final void setId(String id) {
+	public final void setId(final String id) {
 		this.id = id;
 	}
 
@@ -129,7 +137,7 @@ public class PjjyujiDetail {
 		return name;
 	}
 
-	public final void setName(String name) {
+	public final void setName(final String name) {
 		this.name = name;
 	}
 
@@ -137,7 +145,7 @@ public class PjjyujiDetail {
 		return mailId;
 	}
 
-	public final void setMailId(String mailId) {
+	public final void setMailId(final String mailId) {
 		this.mailId = mailId;
 	}
 
@@ -145,7 +153,7 @@ public class PjjyujiDetail {
 		return targetYmd;
 	}
 
-	public final void setTargetYmd(LocalDate targetYmd) {
+	public final void setTargetYmd(final LocalDate targetYmd) {
 		this.targetYmd = targetYmd;
 	}
 
@@ -153,7 +161,7 @@ public class PjjyujiDetail {
 		return pjCd;
 	}
 
-	public final void setPjCd(String pjCd) {
+	public final void setPjCd(final String pjCd) {
 		this.pjCd = pjCd;
 	}
 
@@ -161,7 +169,7 @@ public class PjjyujiDetail {
 		return pjCdJp;
 	}
 
-	public final void setPjCdJp(String pjCdJp) {
+	public final void setPjCdJp(final String pjCdJp) {
 		this.pjCdJp = pjCdJp;
 	}
 
@@ -169,7 +177,7 @@ public class PjjyujiDetail {
 		return pjName;
 	}
 
-	public final void setPjName(String pjName) {
+	public final void setPjName(final String pjName) {
 		this.pjName = pjName;
 	}
 
@@ -177,7 +185,7 @@ public class PjjyujiDetail {
 		return process;
 	}
 
-	public final void setProcess(WorkingProcess processCd) {
+	public final void setProcess(final WorkingProcess processCd) {
 		process = processCd;
 	}
 
@@ -185,7 +193,7 @@ public class PjjyujiDetail {
 		return content;
 	}
 
-	public final void setContent(String content) {
+	public final void setContent(final String content) {
 		this.content = content;
 	}
 
@@ -193,7 +201,7 @@ public class PjjyujiDetail {
 		return ankenNo;
 	}
 
-	public final void setAnkenNo(String ankenNo) {
+	public final void setAnkenNo(final String ankenNo) {
 		this.ankenNo = ankenNo;
 	}
 
@@ -201,8 +209,16 @@ public class PjjyujiDetail {
 		return minute;
 	}
 
-	public final void setMinute(Integer minute) {
+	public final void setMinute(final Integer minute) {
 		this.minute = minute;
+	}
+
+	public String getTargetProject() {
+		return targetProject;
+	}
+
+	public void setTargetProject(final String targetProject) {
+		this.targetProject = targetProject;
 	}
 
 	@Override

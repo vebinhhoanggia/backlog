@@ -77,4 +77,12 @@ public class Helper {
 
 		return StringUtils.defaultString(content);
 	}
+
+	public static String getTargetProject(final String ankenNo, final String defaultTargetCustomer) {
+		final var parts = StringUtils.split(ankenNo, "-");
+		if (parts.length > 0) {
+			return parts[0];
+		}
+		return StringUtils.defaultIfBlank(defaultTargetCustomer, ankenNo);
+	}
 }
