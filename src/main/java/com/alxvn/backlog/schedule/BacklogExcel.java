@@ -1181,6 +1181,9 @@ public class BacklogExcel implements GenSchedule {
 
 		final var projectSchPath = createFolderStoreSchedule(projecType, projectCd);
 
+		// new file schedule
+		final var targetFile = createNewFileSchedule(projectCd, projectSchPath, pds);
+
 		var isUpdateSchedule = false;
 		Path lastSchePath = null;
 		if (isUpdateOldSchedule()) {
@@ -1203,9 +1206,6 @@ public class BacklogExcel implements GenSchedule {
 
 			// evaluate All Formula
 			evaluateFormula(workbook);
-
-			// new file schedule
-			final var targetFile = createNewFileSchedule(projectCd, projectSchPath, pds);
 
 			// ghi vào file schedule mới
 			final var schFilePath = saveToNewFileSchedule(workbook, targetFile);
