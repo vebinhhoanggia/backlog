@@ -586,7 +586,8 @@ public class BacklogExcel implements GenSchedule {
 
 	private List<BacklogDetail> getTargetBacklogs(final Map<String, List<BacklogDetail>> groupedBacklogs,
 			final String parentKey) {
-		return CollectionUtils.emptyIfNull(groupedBacklogs.get(parentKey)).stream().filter(isBacklogDetail).toList();
+		return CollectionUtils.emptyIfNull(groupedBacklogs.get(parentKey)).stream().filter(isBacklogDetail)
+				.sorted(BacklogService.comparator).toList();
 	}
 
 	private Cell getCol(final Sheet sheet, final int rowIdx, final int colIdx) {
@@ -1286,8 +1287,8 @@ public class BacklogExcel implements GenSchedule {
 			final var matchRecordOpt = result.stream()
 					.filter(x -> StringUtils.equals(x.getParentKey(), bd.getParentKey()) //
 							&& StringUtils.equals(x.getMailId(), bd.getMailId()) //
-							&& StringUtils.equals(x.getProcessOfWr(), bd.getProcessOfWr()))
-					.findFirst();
+							&& StringUtils.equals(x.getProcessOfWr(), bd.getProcessOfWr()) //
+					).findFirst();
 			if (matchRecordOpt.isPresent()) {
 				final var matchRecord = matchRecordOpt.get();
 				if (bd.getActualHours() != null) {

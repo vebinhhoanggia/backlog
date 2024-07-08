@@ -116,7 +116,7 @@ public class BacklogService implements BacklogBehavior {
 		log.debug("stastics END");
 	}
 
-	private final Comparator<? super BacklogDetail> comparator = (o1, o2) -> {
+	public final static Comparator<? super BacklogDetail> comparator = (o1, o2) -> {
 		if (o1 == null && o2 == null) {
 			return 0;
 		}
