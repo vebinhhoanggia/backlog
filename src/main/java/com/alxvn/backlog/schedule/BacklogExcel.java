@@ -1154,6 +1154,27 @@ public class BacklogExcel implements GenSchedule {
 		return projectSchPath;
 	}
 
+	private void fillNoneWr(final List<PjjyujiDetail> pds, final Workbook workbook) {
+		final var idxNo = new AtomicInteger();
+		final var newSheet = workbook.createSheet();
+		for (final PjjyujiDetail pd : pds) {
+			final var newRow = newSheet.createRow(idxNo.getAndIncrement());
+			final var idxColNo = new AtomicInteger();
+			var newCell = newRow.createCell(idxColNo.getAndIncrement());
+			newCell.setCellValue(pd.getAnkenNo());
+			newCell = newRow.createCell(idxColNo.getAndIncrement());
+			newCell.setCellValue(pd.getMailId());
+			newCell = newRow.createCell(idxColNo.getAndIncrement());
+			newCell.setCellValue(pd.getPjCd());
+			newCell = newRow.createCell(idxColNo.getAndIncrement());
+			newCell.setCellValue(pd.getMinute());
+			newCell = newRow.createCell(idxColNo.getAndIncrement());
+			newCell.setCellValue(pd.getTargetYmd().toString());
+			newCell = newRow.createCell(idxColNo.getAndIncrement());
+			newCell.setCellValue(pd.getContent());
+		}
+	}
+
 	public void createSchedule(final String projecType, final String projectCd, final List<PjjyujiDetail> pds,
 			final List<BacklogDetail> bds) throws IOException {
 		log.debug("Bat dau tao schedule: {} - {}", projecType, projectCd);
@@ -1175,6 +1196,10 @@ public class BacklogExcel implements GenSchedule {
 				Workbook workbook = new XSSFWorkbook(fis)) {
 
 			fillScheduleInfo(pds, bds, workbook);
+
+			if (StringUtils.equals(projectCd, "000000MCS")) {
+				fillNoneWr(pds, workbook);
+			}
 
 			// evaluate All Formula
 			evaluateFormula(workbook);

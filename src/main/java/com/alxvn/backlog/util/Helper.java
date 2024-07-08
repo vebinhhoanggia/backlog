@@ -61,7 +61,7 @@ public class Helper {
 		}
 
 		// using redmine
-		final var pattern = Pattern.compile("(#?\\d+((\\S*)comment-[^ ]+)?)");
+		final var pattern = Pattern.compile("(#?\\d+((\\S*)[comment|note]-[^ ]+)?)");
 		final var matcher = pattern.matcher(content);
 		if (matcher.find()) {
 			return StringUtils.defaultString(matcher.group(1));
