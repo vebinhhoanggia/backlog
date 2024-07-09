@@ -1156,7 +1156,7 @@ public class BacklogExcel implements GenSchedule {
 
 	private void fillNoneWr(final List<PjjyujiDetail> pds, final Workbook workbook) {
 		final var idxNo = new AtomicInteger();
-		final var newSheet = workbook.createSheet();
+		final var newSheet = workbook.createSheet("NOT_FILL");
 		for (final PjjyujiDetail pd : pds) {
 			final var newRow = newSheet.createRow(idxNo.getAndIncrement());
 			final var idxColNo = new AtomicInteger();
@@ -1164,12 +1164,19 @@ public class BacklogExcel implements GenSchedule {
 			newCell.setCellValue(pd.getAnkenNo());
 			newCell = newRow.createCell(idxColNo.getAndIncrement());
 			newCell.setCellValue(pd.getMailId());
+
 			newCell = newRow.createCell(idxColNo.getAndIncrement());
 			newCell.setCellValue(pd.getPjCd());
+
+			newCell = newRow.createCell(idxColNo.getAndIncrement());
+			newCell.setCellValue(pd.getProcess().getName());
+
 			newCell = newRow.createCell(idxColNo.getAndIncrement());
 			newCell.setCellValue(pd.getMinute());
+
 			newCell = newRow.createCell(idxColNo.getAndIncrement());
 			newCell.setCellValue(pd.getTargetYmd().toString());
+
 			newCell = newRow.createCell(idxColNo.getAndIncrement());
 			newCell.setCellValue(pd.getContent());
 		}
@@ -1200,9 +1207,7 @@ public class BacklogExcel implements GenSchedule {
 
 			fillScheduleInfo(pds, bds, workbook);
 
-			if (StringUtils.equals(projectCd, "000000MCS")) {
-				fillNoneWr(pds, workbook);
-			}
+			fillNoneWr(pds, workbook);
 
 			// evaluate All Formula
 			evaluateFormula(workbook);
