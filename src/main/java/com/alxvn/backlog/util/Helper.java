@@ -5,6 +5,7 @@ package com.alxvn.backlog.util;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
@@ -37,11 +38,15 @@ public class Helper {
 		// split first space for ticket no
 //		CATV_SCHEDULE-3068 SYMPHO05-1 Q&Aレビュー 
 		final var parts = StringUtils.split(content);
-		if (parts.length > 0) {
+		if (Objects.nonNull(parts) && parts.length > 0) {
 			final var defaultAnkenNo = PROJECT_ACCEPT.stream().map(t -> getAnkenNo(t, parts[0]))
 					.filter(StringUtils::isNotBlank).findFirst().orElse(StringUtils.EMPTY);
 			if (StringUtils.isNotBlank(defaultAnkenNo)) {
 				return defaultAnkenNo;
+			}
+			final var firstPart = parts[0];
+			if (PROJECT_ACCEPT.stream().anyMatch(p -> StringUtils.contains(firstPart, p))) {
+				return firstPart;
 			}
 		}
 
@@ -80,7 +85,7 @@ public class Helper {
 
 	public static String getTargetProject(final String ankenNo, final String defaultTargetCustomer) {
 		final var parts = StringUtils.split(ankenNo, "-");
-		if (parts.length > 0) {
+		if (Objects.nonNull(parts) && parts.length > 0) {
 			return parts[0];
 		}
 		return StringUtils.defaultIfBlank(defaultTargetCustomer, ankenNo);
