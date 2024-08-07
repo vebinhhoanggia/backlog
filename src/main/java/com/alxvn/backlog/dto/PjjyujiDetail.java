@@ -27,6 +27,7 @@ public class PjjyujiDetail {
 	private String ankenNo;
 	private Integer minute;
 	private String targetProject;
+	private String workPhase;
 
 	public static class Builder {
 		private String id;
@@ -41,6 +42,7 @@ public class PjjyujiDetail {
 		private String ankenNo;
 		private Integer minute;
 		private String targetProject;
+		private String workPhase;
 
 		public final Builder setMailId(final String mailId) {
 			this.mailId = mailId;
@@ -102,15 +104,21 @@ public class PjjyujiDetail {
 			return this;
 		}
 
+		public final Builder setWorkPhase(final String workPhase) {
+			this.workPhase = workPhase;
+			return this;
+		}
+
 		public PjjyujiDetail build() {
 			return new PjjyujiDetail(id, name, mailId, targetYmd, pjCd, pjCdJp, pjName, process, content, ankenNo,
-					minute, targetProject);
+					minute, targetProject, workPhase);
 		}
 	}
 
 	private PjjyujiDetail(final String id, final String name, final String mailId, final LocalDate targetYmd,
 			final String pjCd, final String pjCdJp, final String pjName, final WorkingProcess process,
-			final String content, final String ankenNo, final Integer minute, final String targetProject) {
+			final String content, final String ankenNo, final Integer minute, final String targetProject,
+			final String workPhase) {
 		this.id = id;
 		this.name = name;
 		this.mailId = mailId;
@@ -123,6 +131,7 @@ public class PjjyujiDetail {
 		this.ankenNo = ankenNo;
 		this.minute = minute;
 		this.targetProject = targetProject;
+		this.workPhase = workPhase;
 	}
 
 	public final String getId() {
@@ -219,6 +228,14 @@ public class PjjyujiDetail {
 
 	public void setTargetProject(final String targetProject) {
 		this.targetProject = targetProject;
+	}
+
+	public String getWorkPhase() {
+		return workPhase;
+	}
+
+	public void setWorkPhase(final String workPhase) {
+		this.workPhase = workPhase;
 	}
 
 	@Override

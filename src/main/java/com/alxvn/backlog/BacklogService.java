@@ -429,6 +429,7 @@ public class BacklogService implements BacklogBehavior {
 				final var minute4 = columnValues.get("法定祝日残業時間(分)");
 				final var minute5 = columnValues.get("深夜残業(分)");
 				final var ankenNo = Helper.getAnkenNo(content);
+				final var workPhase = Helper.getWorkPhase(ankenNo, content);
 
 				final var targetProject = Helper.getTargetProject(ankenNo, null);
 
@@ -453,6 +454,8 @@ public class BacklogService implements BacklogBehavior {
 						.setContent(content)
 						/**/
 						.setAnkenNo(ankenNo)
+						/**/
+						.setWorkPhase(workPhase)
 						/**/
 						.setTargetProject(targetProject)
 						/**/
@@ -613,9 +616,9 @@ public class BacklogService implements BacklogBehavior {
 		final var bug3rdTest = columnValues.get("課題発生第三者");
 
 		final var process = BacklogProcess.of(processOfWr, issueType);
-
 		final var ankenNo = StringUtils.defaultIfBlank(targetTaskId, Helper.getAnkenNo(subject));
 		final var targetProject = Helper.getTargetProject(ankenNo, targetCustomer);
+		final var workPhase = Helper.getWorkPhase(ankenNo, subject);
 
 		return new BacklogDetail.Builder().key(backlogKey) //
 				.issueType(issueType) //
@@ -644,6 +647,7 @@ public class BacklogService implements BacklogBehavior {
 				.bug3rdTest(bug3rdTest) //
 				.processOfWr(processOfWr) //
 				.process(process) //
+				.workPhase(workPhase) //
 				/**/
 				.build();
 	}

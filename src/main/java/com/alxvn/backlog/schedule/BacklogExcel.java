@@ -226,6 +226,9 @@ public class BacklogExcel implements GenSchedule {
 	}
 
 	private Optional<WorkingProcess> getOperation(final BacklogDetail backlogDetail) {
+		if (backlogDetail == null) {
+			return Optional.ofNullable(null);
+		}
 		final var processOfWr = backlogDetail.getProcessOfWr();
 		final var processOfWrCd = extracProcessOfWrCd(processOfWr);
 		if (StringUtils.isBlank(processOfWrCd)) {
@@ -244,7 +247,10 @@ public class BacklogExcel implements GenSchedule {
 		}
 		final var curIssueType = Optional.ofNullable(backlogDetail).map(BacklogDetail::getProcess)
 				.map(BacklogProcess::getIssueType).orElse(StringUtils.EMPTY);
-		return Optional.ofNullable(WorkingProcess.of(processOfWrCd, curIssueType));
+		final var curWorkPhase = Optional.ofNullable(backlogDetail).map(BacklogDetail::getWorkPhase)
+				.orElse(StringUtils.EMPTY);
+		return Optional
+				.ofNullable(WorkingProcess.of(processOfWrCd, StringUtils.defaultIfBlank(curWorkPhase, curIssueType)));
 	}
 
 	private double getProgress(final String backlogProgress) {
@@ -341,16 +347,19 @@ public class BacklogExcel implements GenSchedule {
 
 		fillBacklogDataForRow(curRow, backlogDetail, indexNo);
 
-		final var ankenNo = Optional.ofNullable(backlogDetail).map(BacklogDetail::getAnkenNo).orElse(StringUtils.EMPTY);
-		final var pic = backlogDetail.getMailId();
-		final var operation = getOperation(backlogDetail);
-
 		// fill working report data
-		return fillWrData(sheet, curRow, ankenNo, pic, operation, wrTargets);
+		return fillWrData(sheet, curRow, backlogDetail, wrTargets);
 	}
 
-	private Collection<PjjyujiDetail> fillWrData(final Sheet sheet, final Row curRow, final String ankenNo,
-			final String pic, final Optional<WorkingProcess> operation, final List<PjjyujiDetail> wrTargets) {
+	private Collection<PjjyujiDetail> fillWrData(final Sheet sheet, final Row curRow, final BacklogDetail backlogDetail,
+			final List<PjjyujiDetail> wrTargets) {
+
+		final var ankenNo = Optional.ofNullable(backlogDetail).map(BacklogDetail::getAnkenNo).orElse(StringUtils.EMPTY);
+		final var blWorkPhase = Optional.ofNullable(backlogDetail).map(BacklogDetail::getWorkPhase)
+				.orElse(StringUtils.EMPTY);
+		final var pic = Optional.ofNullable(backlogDetail).map(BacklogDetail::getMailId).orElse(StringUtils.EMPTY);
+		final var operation = getOperation(backlogDetail);
+
 		// filter by mail, ticket no, process phase
 		final var wrOfRow = CollectionUtils.emptyIfNull(wrTargets).stream().filter(w -> {
 			final var ticketNo = w.getAnkenNo();
@@ -358,8 +367,16 @@ public class BacklogExcel implements GenSchedule {
 			final var processCd = w.getProcess().getCode();
 			final var wrOpeationCd = Optional.ofNullable(WorkingPhase.fromString(processCd)).map(WorkingPhase::getCode)
 					.orElse(StringUtils.EMPTY);
-			return StringUtils.equals(ankenNo, ticketNo) && StringUtils.equals(pic, mailId)
-					&& StringUtils.equals(wrOpeationCd, operation.map(WorkingProcess::getCode).orElse(null));
+			final var wrWorkPhase = w.getWorkPhase();
+			// Thuc hien cho phep wr chua nhap noi dung giong như title cua backlog
+			return StringUtils.equals(ankenNo, ticketNo) && StringUtils.equals(pic, mailId) && (
+			/* PG */
+			isBacklogPg.test(backlogDetail)
+					&& StringUtils.equals(wrOpeationCd, operation.map(WorkingProcess::getCode).orElse(null)) ||
+			/* NOT PG */
+					!isBacklogPg.test(backlogDetail)
+							&& StringUtils.equals(wrOpeationCd, operation.map(WorkingProcess::getCode).orElse(null))
+							&& StringUtils.equals(wrWorkPhase, blWorkPhase));
 		}).toList();
 
 		final Map<LocalDate, Integer> groupedData = wrOfRow.stream().collect(
@@ -1314,28 +1331,63 @@ public class BacklogExcel implements GenSchedule {
 	private List<BacklogDetail> reFilterBacklogs(final List<BacklogDetail> details) {
 		final List<BacklogDetail> result = new ArrayList<>();
 		for (final BacklogDetail bd : details) {
-			final var matchRecordOpt = result.stream()
-					.filter(x -> StringUtils.equals(x.getParentKey(), bd.getParentKey()) //
-							&& StringUtils.equals(x.getMailId(), bd.getMailId()) //
-							&& StringUtils.equals(x.getProcessOfWr(), bd.getProcessOfWr()) //
-					).findFirst();
-			if (matchRecordOpt.isPresent()) {
-				final var matchRecord = matchRecordOpt.get();
-				if (bd.getActualHours() != null) {
-					if (matchRecord.getActualHours() != null) {
-						matchRecord.setActualHours(matchRecord.getActualHours().add(bd.getActualHours()));
-					} else {
-						matchRecord.setActualHours(bd.getActualHours());
+
+			// Gom các record bug nội bộ vào chung issueType 開発 hay 調査
+			final var isInternalBug = StringUtils.equals(bd.getIssueType(), "課題(社内)");
+
+			if (isInternalBug) {
+				final var matchRecordOpt = result.stream().filter(x -> StringUtils.equals(x.getParentKey(),
+						bd.getParentKey()) //
+						&& StringUtils.equals(x.getMailId(), bd.getMailId()) //
+						&& (StringUtils.equals(x.getIssueType(), "調査") || StringUtils.equals(x.getIssueType(), "開発")) //
+				).findFirst();
+				if (matchRecordOpt.isPresent()) {
+					final var matchRecord = matchRecordOpt.get();
+					if (bd.getActualHours() != null) {
+						if (matchRecord.getActualHours() != null) {
+							matchRecord.setActualHours(matchRecord.getActualHours().add(bd.getActualHours()));
+						} else {
+							matchRecord.setActualHours(bd.getActualHours());
+						}
 					}
-				}
-				if (bd.getEstimatedHours() != null) {
-					if (matchRecord.getEstimatedHours() != null) {
-						matchRecord.setEstimatedHours(matchRecord.getEstimatedHours().add(bd.getEstimatedHours()));
-					} else {
-						matchRecord.setEstimatedHours(bd.getEstimatedHours());
+					if (bd.getEstimatedHours() != null) {
+						if (matchRecord.getEstimatedHours() != null) {
+							matchRecord.setEstimatedHours(matchRecord.getEstimatedHours().add(bd.getEstimatedHours()));
+						} else {
+							matchRecord.setEstimatedHours(bd.getEstimatedHours());
+						}
 					}
+				} else {
+					result.add(bd);
 				}
 			} else {
+				// Gộp chung các phase lại với nhau ???
+//				final var matchRecordOpt = result.stream().filter(x -> StringUtils.equals(x.getParentKey(),
+//						bd.getParentKey()) //
+//						&& StringUtils.equals(x.getMailId(), bd.getMailId()) //
+//						&& (isBacklogPg.test(bd) && StringUtils.equals(x.getProcessOfWr(), bd.getProcessOfWr())
+//								|| !isBacklogPg.test(bd) && StringUtils.equals(x.getProcessOfWr(), bd.getProcessOfWr())
+//										&& StringUtils.equals(x.getIssueType(), bd.getIssueType())) //
+//				).findFirst();
+//				if (matchRecordOpt.isPresent()) {
+//					final var matchRecord = matchRecordOpt.get();
+//					if (bd.getActualHours() != null) {
+//						if (matchRecord.getActualHours() != null) {
+//							matchRecord.setActualHours(matchRecord.getActualHours().add(bd.getActualHours()));
+//						} else {
+//							matchRecord.setActualHours(bd.getActualHours());
+//						}
+//					}
+//					if (bd.getEstimatedHours() != null) {
+//						if (matchRecord.getEstimatedHours() != null) {
+//							matchRecord.setEstimatedHours(matchRecord.getEstimatedHours().add(bd.getEstimatedHours()));
+//						} else {
+//							matchRecord.setEstimatedHours(bd.getEstimatedHours());
+//						}
+//					}
+//				} else {
+//					result.add(bd);
+//				}
 				result.add(bd);
 			}
 		}

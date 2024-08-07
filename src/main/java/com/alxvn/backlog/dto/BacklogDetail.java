@@ -45,6 +45,7 @@ public class BacklogDetail {
 	private String processOfWr;
 	private BacklogProcess process;
 	private String targetProject;
+	private String workPhase;
 
 	public String getKey() {
 		return key;
@@ -278,6 +279,14 @@ public class BacklogDetail {
 		this.targetProject = targetProject;
 	}
 
+	public String getWorkPhase() {
+		return workPhase;
+	}
+
+	public void setWorkPhase(final String workPhase) {
+		this.workPhase = workPhase;
+	}
+
 	public static class Builder {
 
 		private final BacklogDetail backlogDetail;
@@ -428,6 +437,11 @@ public class BacklogDetail {
 
 		public final Builder targetProject(final String targetProject) {
 			backlogDetail.targetProject = targetProject;
+			return this;
+		}
+
+		public final Builder workPhase(final String workPhase) {
+			backlogDetail.workPhase = workPhase;
 			return this;
 		}
 

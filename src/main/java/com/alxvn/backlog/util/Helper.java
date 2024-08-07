@@ -9,12 +9,17 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author KEDD
  *
  */
 public class Helper {
+
+	private static final Logger log = LoggerFactory.getLogger(Helper.class);
 
 	private Helper() {
 		throw new IllegalStateException("Utility class");
@@ -81,6 +86,23 @@ public class Helper {
 		}
 
 		return StringUtils.defaultString(content);
+	}
+
+	public static String getWorkPhase(final String ankenNo, final String content) {
+		if (!StringUtils.equals(ankenNo, content) && StringUtils.isNotBlank(ankenNo)
+				&& StringUtils.isNotBlank(content)) {
+			final var index = StringUtils.indexOf(content, ankenNo);
+			if (index >= 0) {
+				final var result = content.substring(index);
+				final var parts = StringUtils.split(StringUtils.trim(StringUtils.remove(result, ankenNo)));
+				if (Objects.nonNull(parts) && parts.length > 0) {
+					final var firstPart = parts[0];
+					log.debug("getWorkPhase.rs: {}", firstPart);
+					return firstPart;
+				}
+			}
+		}
+		return Strings.EMPTY;
 	}
 
 	public static String getTargetProject(final String ankenNo, final String defaultTargetCustomer) {
